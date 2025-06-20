@@ -35,6 +35,29 @@ To build and run this project with SFML in Visual Studio:
 
 **For detailed instructions, see the [SFML official tutorial](https://www.sfml-dev.org/tutorials/2.6/start-vc.php).**
 
+## 🧭 How to Use
+
+After installing and launching the Clock app, you’ll see the main interface. Here’s how to navigate and use the core features:
+
+When you open the app, you’ll see the home screen with four main buttons:
+
+- **Clock:**  
+  Shows the current time. 
+
+- **Stopwatch:**  
+  Go to the "Stopwatch" tab. Press **Space** to start or pause the stopwatch (toggle). Press **R** at any time to reset and clear the time.
+
+- **Timer:**  
+  Go to the "Timer" tab. Enter your desired countdown time using the format `HHMMSS` (for example, `1030` means 10 minutes and 30 seconds,`13023` means 1 hour, 30 minutes and 23 seconds , similar to the Android timer). Press **Enter** to    start the countdown. When the timer finishes, you’ll receive a notification. Press **R** to reset the timer and stop the notification.
+
+- **Alarm:**  
+  Go to the "Alarm" tab. Enter the desired alarm time using the same format as the timer (e.g., `0730` for 7:30). After entering the time, type `AM` or `PM` to set the period. The alarm will be set automatically. When it’s time, the app     will alert you. Press **R** to reset the alarm and stop the notification.
+
+- **Navigation with ESC:**  
+  Press **Esc** to go back one step:
+  - If you are in the Timer tab, pressing **Esc** returns you to the home screen.
+  - If you are on the home screen, pressing **Esc** will exit the app.
+
 
 
 
