@@ -5,6 +5,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <algorithm>
 
 class FontLoading {
 	static sf::Font font;
@@ -399,7 +400,7 @@ public:
 
 		std::stringstream ss;
 		ss << std::setfill('0') << std::setw(2) << hour << ":"
-			<< std::setfill('0') << std::setw(2) << minute << ":"
+			<< std::setfill('0') << std::setw(2) << minute << " "
 			<< (currentIsAM ? "AM" : "PM");
 
 		return ss.str();
@@ -412,23 +413,22 @@ public:
 		int hours, minutes;
 
 		if (input.length() == 3) {
-			hours = timeValue / 100;
-			minutes = timeValue % 100;
+			hours = timeValue / 100;  
+			minutes = timeValue % 100;   
 		}
-		else {
-			hours = timeValue / 100;
-			minutes = timeValue % 100;
+		else { 
+			hours = timeValue / 100;      
+			minutes = timeValue % 100;    
 		}
 
 		if (minutes >= 60) {
-			hours += minutes / 60;
-			minutes = minutes % 60;
+			return;
 		}
 
 		if (hours < 1 || hours > 12) {
-			std::cout << "Invalid hour\n";
 			return;
 		}
+
 
 		alarmHour = hours;
 		alarmMinute = minutes;
@@ -457,13 +457,14 @@ public:
 		if (waitingForAMPM) {
 			if (input.length() >= 2) {
 				std::string lastTwo = input.substr(input.length() - 2);
-				if (lastTwo == "am" || lastTwo == "AM") {
+				std::transform(lastTwo.begin(), lastTwo.end(), lastTwo.begin(), ::tolower);
+				if (lastTwo == "am") {
 					isAM = true;
 					alarmSet = true;
 					waitingForAMPM = false;
 					inputTime.clear();
 				}
-				else if (lastTwo == "pm" || lastTwo == "PM") {
+				else if (lastTwo == "pm") {
 					isAM = false;
 					alarmSet = true;
 					waitingForAMPM = false;
@@ -472,7 +473,58 @@ public:
 			}
 		}
 		else if (!alarmSet && !waitingForAMPM) {
-			parseTimeInput(input);
+			std::string upperInput = input;
+			std::transform(upperInput.begin(), upperInput.end(), upperInput.begin(), ::toupper);
+
+			if (upperInput.find("AM") != std::string::npos || upperInput.find("PM") != std::string::npos) {
+				std::string numericPart;
+				for (char c : input) {
+					if (std::isdigit(c)) {
+						numericPart += c;
+					}
+				}
+
+				if (numericPart.length() >= 3 && numericPart.length() <= 4) {
+					int timeValue = std::stoi(numericPart);
+					int hours, minutes;
+
+					if (numericPart.length() == 3) {
+						hours = timeValue / 100;      
+						minutes = timeValue % 100;   
+					}
+					else {
+						hours = timeValue / 100;      
+						minutes = timeValue % 100;    
+					}
+
+					if (minutes >= 60 || hours < 1 || hours > 12) {
+						return;
+					}
+
+					alarmHour = hours;
+					alarmMinute = minutes;
+
+					if (upperInput.find("AM") != std::string::npos) {
+						isAM = true;
+					}
+					else if (upperInput.find("PM") != std::string::npos) {
+						isAM = false;
+					}
+
+					alarmSet = true;
+					waitingForAMPM = false;
+					inputTime.clear();
+				}
+			}
+			else {
+				parseTimeInput(input);
+			}
+		}
+	}
+
+	void processInput() {
+		if (!inputTime.empty()) {
+			handleInput(inputTime);
 		}
 	}
 
@@ -512,7 +564,7 @@ public:
 		isAM = true;
 	}
 
-	void draw(sf::RenderWindow& window) const {
+	void draw(sf::RenderWindow& window, const std::string& inputLabel) const {
 		sf::Vector2u windowSize = window.getSize();
 
 		std::string currentTimeStr = const_cast<Alarm*>(this)->getCurrentTime();
@@ -529,7 +581,7 @@ public:
 			instructions = "*** ALARM RINGING! *** Press R to stop";
 		}
 		else if (!alarmSet) {
-			instructions = "Enter time (730 = 7:30, 1245 = 12:45): " + inputTime;
+			instructions = "Enter time (730 = 7:30, 1245 = 12:45): " + inputLabel;
 		}
 		else {
 			instructions = "Alarm is set. Press R to reset";
@@ -652,13 +704,11 @@ int main() {
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Enter) {
 						if (!alarmLabel.empty()) {
 							alarm.setInput(alarmLabel);
-							
 						}
 					}
-					else if (keyPressed->scancode==sf::Keyboard::Scancode::Backspace) {
+					else if (keyPressed->scancode == sf::Keyboard::Scancode::Backspace) {
 						if (!alarmLabel.empty()) {
 							alarmLabel.pop_back();
-							alarm.setInput(alarmLabel);
 						}
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
@@ -671,23 +721,18 @@ int main() {
 					else if (keyPressed->scancode >= sf::Keyboard::Scancode::Num1 && keyPressed->scancode <= sf::Keyboard::Scancode::Num9) {
 						int digit = static_cast<int>(keyPressed->scancode) - static_cast<int>(sf::Keyboard::Scancode::Num1) + 1;
 						alarmLabel += std::to_string(digit);
-						alarm.setInput(alarmLabel);
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::Num0) {
 						alarmLabel += "0";
-						alarm.setInput(alarmLabel);
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::A) {
 						alarmLabel += "a";
-						alarm.setInput(alarmLabel);
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::M) {
 						alarmLabel += "m";
-						alarm.setInput(alarmLabel);
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::P) {
 						alarmLabel += "p";
-						alarm.setInput(alarmLabel);
 					}
 				}
 				
@@ -742,7 +787,7 @@ int main() {
 	}
 	else if (currentScreen == "alarm") {
 		alarm.update();
-		alarm.draw(window);
+		alarm.draw(window, alarmLabel);
 	}
 
 	window.display();
