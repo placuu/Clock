@@ -131,7 +131,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Alarm.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Clock.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Stopwatch.cpp" />
+    <ClCompile Include="Timer.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Alarm.h" />
+    <ClInclude Include="Button.h" />
+    <ClInclude Include="Clock.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="Stopwatch.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
