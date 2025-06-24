@@ -11,7 +11,7 @@ class FontLoading {
 	static sf::Font font;
 	static bool fontLoaded;
 public:
-	static const sf::Font& getFont() {
+	static const sf::Font& GetFont() {
 		if (!fontLoaded) {
 			if (!font.openFromFile("C:/Windows/Fonts/arial.ttf")) {
 				std::cerr << "Error loading font\n";
@@ -23,7 +23,7 @@ public:
 		return font;
 	}
 
-	static bool isLoaded() {
+	static bool IsLoaded() {
 		return fontLoaded;
 	}
 };
@@ -37,7 +37,7 @@ class Button {
 	int index;
 
 public:
-	Button(const std::string& label,int index, int totalButtons, sf::Vector2u windowSize):text(FontLoading::getFont(), label, 20), index(index) {
+	Button(const std::string& label,int index, int totalButtons, sf::Vector2u windowSize):text(FontLoading::GetFont(), label, 20), index(index) {
 
 
 		const float buttonWidth = 300.f;
@@ -46,8 +46,8 @@ public:
 		const float marginBottom = 40.f;
 
 		float totalWidth = totalButtons * buttonWidth + (totalButtons - 1) * spacing;
-		float startX = (windowSize.x - totalWidth) / 2.f;
-		float x = startX + index * (buttonWidth + spacing);
+		float StartX = (windowSize.x - totalWidth) / 2.f;
+		float x = StartX + index * (buttonWidth + spacing);
 		float y = windowSize.y - buttonHeight - marginBottom;
 
 		shape.setSize(sf::Vector2f(buttonWidth, buttonHeight));
@@ -56,7 +56,7 @@ public:
 		shape.setOutlineThickness(2);
 		shape.setOutlineColor(sf::Color(100, 100, 100));
 
-		text.setFont(FontLoading::getFont());
+		text.setFont(FontLoading::GetFont());
 		text.setString(label);
 		text.setCharacterSize(40);
 		text.setFillColor(sf::Color::White);
@@ -70,11 +70,11 @@ public:
 		text.setPosition(shapeCenter);
 	}
 
-	void draw(sf::RenderWindow& window) const {
+	void Draw(sf::RenderWindow& window) const {
 		window.draw(shape);
 		window.draw(text);
 	}
-	bool isClicked(const sf::Vector2i& mousePosition) const {
+	bool IsClicked(const sf::Vector2i& mousePosition) const {
 		sf::FloatRect bounds = shape.getGlobalBounds();
 		
 		if (bounds.contains(static_cast<sf::Vector2f>(mousePosition))) {
@@ -83,7 +83,7 @@ public:
 		return false;
 	}
 
-	int getIndex() const {
+	int GetIndex() const {
 		return index;
 	}
 };
@@ -91,8 +91,8 @@ public:
 class Clock{
 	sf::Text timeText;
 public:
-	Clock(std::string& label) : timeText(FontLoading::getFont(), label,400){
-		timeText.setFont(FontLoading::getFont());
+	Clock(std::string& label) : timeText(FontLoading::GetFont(), label,400){
+		timeText.setFont(FontLoading::GetFont());
 		timeText.setCharacterSize(400);
 		timeText.setFillColor(sf::Color::White);
 
@@ -101,7 +101,7 @@ public:
 		timeText.setOrigin(sf::Vector2f(bounds.position.x + bounds.size.x / 2.f, bounds.position.y + bounds.size.y / 2.f));
 	}
 
-	void updateTime() {
+	void UpdateTime() {
 		std::time_t now = std::time(nullptr);
 		std::tm localTime;
 		localtime_s(&localTime, &now);  
@@ -111,7 +111,7 @@ public:
 		timeText.setString(oss.str());
 	}
 
-	void draw(sf::RenderWindow& window) const {
+	void Draw(sf::RenderWindow& window) const {
 		sf::Vector2u windowSize = window.getSize();
 		sf::Text centerText = timeText;
 		centerText.setPosition(sf::Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
@@ -122,50 +122,50 @@ public:
 class Stopwatch {
 	sf::Clock clock;
 	bool running = false;
-	sf::Text stopwatchtext;
+	sf::Text Stopwatchtext;
 	sf::Time elapsedTime = sf::Time::Zero;
 public:
-	Stopwatch(std::string& label) : stopwatchtext(FontLoading::getFont(), label, 20) {
-		stopwatchtext.setFont(FontLoading::getFont());
-		stopwatchtext.setCharacterSize(300);
-		stopwatchtext.setFillColor(sf::Color::White);
+	Stopwatch(std::string& label) : Stopwatchtext(FontLoading::GetFont(), label, 20) {
+		Stopwatchtext.setFont(FontLoading::GetFont());
+		Stopwatchtext.setCharacterSize(300);
+		Stopwatchtext.setFillColor(sf::Color::White);
 	
-		stopwatchtext.setString("88:88:888");
-		sf::FloatRect bounds = stopwatchtext.getLocalBounds();
-		stopwatchtext.setOrigin(sf::Vector2f(bounds.position.x + bounds.size.x / 2.f, bounds.position.y + bounds.size.y / 2.f));
+		Stopwatchtext.setString("88:88:888");
+		sf::FloatRect bounds = Stopwatchtext.getLocalBounds();
+		Stopwatchtext.setOrigin(sf::Vector2f(bounds.position.x + bounds.size.x / 2.f, bounds.position.y + bounds.size.y / 2.f));
 	}
 
-	bool isRunning() const {
+	bool IsRunning() const {
 		return running;
 	}
 
-	void start(){
+	void Start(){
 		if (!running) {
 			clock.restart();
 			running = true;
 		}
 	}
-	void stop() {
+	void Stop() {
 		if(running) {
 			elapsedTime += clock.getElapsedTime();
 			running = false;
 		}
 	}
-	void reset(){
+	void Reset(){
 		elapsedTime = sf::Time::Zero;
 		clock.reset();
 		running = false;
 	}
 
-	sf::Time getElapsedTime() const {
+	sf::Time GetElapsedTime() const {
 		if (running) {
 			return elapsedTime + clock.getElapsedTime();
 		}
 		return elapsedTime;
 	}
 	
-	void updateDisplay() {
-		sf::Time currentTime = getElapsedTime();
+	void UpdateDisplay() {
+		sf::Time currentTime = GetElapsedTime();
 		int totalMilliSeconds = static_cast<int>(currentTime.asMilliseconds());
 		int minutes = totalMilliSeconds / 60000;
 		int seconds = (totalMilliSeconds % 60000) / 1000;
@@ -182,12 +182,12 @@ public:
 		if (milliseconds < 10) oss << "0";
 		oss << milliseconds;
 
-		stopwatchtext.setString(oss.str());
+		Stopwatchtext.setString(oss.str());
 	}
 
-	void draw(sf::RenderWindow& window) const {
+	void Draw(sf::RenderWindow& window) const {
 		sf::Vector2u windowSize = window.getSize();
-		sf::Text centerStopwatch = stopwatchtext;
+		sf::Text centerStopwatch = Stopwatchtext;
 		centerStopwatch.setPosition(sf::Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
 		window.draw(centerStopwatch);
 	}
@@ -207,10 +207,10 @@ class Timer {
 	bool soundPlayed;
 
 	std::string inputDigits;
-	bool isRunning;
+	bool IsRunning;
 	bool isFinished;
 public:
-	Timer(std::string& label) :timerText(FontLoading::getFont(), label, 20),inputText(FontLoading::getFont(),label,20), isRunning(false), isFinished(false),totalTime(0),remainingTime(0),soundPlayed(false) {
+	Timer(std::string& label) :timerText(FontLoading::GetFont(), label, 20),inputText(FontLoading::GetFont(),label,20), IsRunning(false), isFinished(false),totalTime(0),remainingTime(0),soundPlayed(false) {
 		timerText.setCharacterSize(300);
 		timerText.setFillColor(sf::Color::White);
 		timerText.setString("00:00:00");
@@ -228,21 +228,21 @@ public:
 		timerSound.setLooping(true);
 	}
 
-	void start(float input) {
+	void Start(float input) {
 		totalTime = input;
 		remainingTime = totalTime;
-		isRunning = true;
+		IsRunning = true;
 		clock.restart();
 	}
 
-	void update() {
-		if (isRunning && remainingTime > 0) {
+	void Update() {
+		if (IsRunning && remainingTime > 0) {
 			float elapsed = clock.restart().asSeconds();
 			remainingTime -= elapsed;
 
 			if (remainingTime <= 0) {
 				remainingTime = 0;
-				isRunning = false;
+				IsRunning = false;
 				isFinished = true;
 
 				if (!soundPlayed) {
@@ -263,7 +263,7 @@ public:
 		timerText.setString(timeString);
 	}
 
-	void draw(sf::RenderWindow& window) const{
+	void Draw(sf::RenderWindow& window) const{
 		sf::Vector2u windowSize = window.getSize();
 
 		sf::Text timerCenter = timerText;
@@ -272,7 +272,7 @@ public:
 		timerCenter.setPosition(sf::Vector2f(windowSize.x / 2.f, windowSize.y / 2.f));
 		window.draw(timerCenter);
 
-		if (!isRunning && !isFinished) {
+		if (!IsRunning && !isFinished) {
 			sf::Text inputCenter = inputText;
 			sf::FloatRect inputBounds = inputCenter.getLocalBounds();
 			inputCenter.setOrigin(sf::Vector2f(inputBounds.position.x + inputBounds.size.x / 2.f, inputBounds.position.y + inputBounds.size.y / 2.f));
@@ -281,8 +281,8 @@ public:
 		}
 
 		if (isFinished) {
-			sf::Text finishedText(FontLoading::getFont(),"",20);
-			finishedText.setFont(FontLoading::getFont());
+			sf::Text finishedText(FontLoading::GetFont(),"",20);
+			finishedText.setFont(FontLoading::GetFont());
 			finishedText.setString("TIME'S UP!");
 			finishedText.setCharacterSize(100);
 			finishedText.setFillColor(sf::Color::Red);
@@ -293,17 +293,17 @@ public:
 		}
 	}
 
-	void setInput(const std::string& input) {
+	void SetInput(const std::string& input) {
 		std::string instruction = "Enter time (SS, MMSS, or HHMMSS): ";
 		inputText.setString(instruction + input);
 		inputDigits = input;
 	}
 
-	bool isTimerFinished() const{
+	bool IsTimerFinished() const{
 		return isFinished;
 	}
 
-	void startTimer() {
+	void StartTimer() {
 		if (!inputDigits.empty()) {
 			try {
 				int inputNumber = std::stoi(inputDigits);
@@ -327,7 +327,7 @@ public:
 				}
 
 				totalSeconds = hours * 3600 + minutes * 60 + seconds;
-				start(static_cast<float>(totalSeconds));
+				Start(static_cast<float>(totalSeconds));
 				inputDigits.clear();
 			}
 			catch (const std::exception& e) {
@@ -336,8 +336,8 @@ public:
 		}
 	}
 
-	void reset() {
-		isRunning = false;
+	void Reset() {
+		IsRunning = false;
 		isFinished = false;
 		remainingTime = 0;
 		totalTime = 0;
@@ -362,7 +362,7 @@ class Alarm {
 	bool isRinging;
 	bool waitingForAMPM;
 public:
-	Alarm(std::string& label) : alarmText(FontLoading::getFont(), label, 20), instructionText(FontLoading::getFont(), label, 20),
+	Alarm(std::string& label) : alarmText(FontLoading::GetFont(), label, 20), instructionText(FontLoading::GetFont(), label, 20),
 		alarmHour(0), alarmMinute(0), isAM(true), alarmSet(false), isRinging(false), waitingForAMPM(false) {
 		
 		alarmText.setFillColor(sf::Color::White);
@@ -522,13 +522,13 @@ public:
 		}
 	}
 
-	void processInput() {
+	void ProcessInput() {
 		if (!inputTime.empty()) {
 			handleInput(inputTime);
 		}
 	}
 
-	void setInput(const std::string input) {
+	void SetInput(const std::string input) {
 		inputTime = input;
 		if (waitingForAMPM) {
 			handleInput(input);
@@ -538,14 +538,14 @@ public:
 		}
 	}
 
-	void update() {
+	void Update() {
 		if (alarmSet && !isRinging && checkAlarm()) {
 			isRinging = true;
 			alarmSound.play();
 		}
 	}
 
-	void stopAlarm() {
+	void StopAlarm() {
 		if (isRinging) {
 			alarmSound.stop();
 			isRinging = false;
@@ -553,7 +553,7 @@ public:
 		}
 	}
 
-	void reset() {
+	void Reset() {
 		alarmSound.stop();
 		isRinging = false;
 		alarmSet = false;
@@ -564,7 +564,7 @@ public:
 		isAM = true;
 	}
 
-	void draw(sf::RenderWindow& window, const std::string& inputLabel) const {
+	void Draw(sf::RenderWindow& window, const std::string& inputLabel) const {
 		sf::Vector2u windowSize = window.getSize();
 
 		std::string currentTimeStr = const_cast<Alarm*>(this)->getCurrentTime();
@@ -578,13 +578,13 @@ public:
 			instructions = "Enter 'am' or 'pm' and press Enter: " + inputTime;
 		}
 		else if (isRinging) {
-			instructions = "*** ALARM RINGING! *** Press R to stop";
+			instructions = "*** ALARM RINGING! *** Press R to Stop";
 		}
 		else if (!alarmSet) {
 			instructions = "Enter time (730 = 7:30, 1245 = 12:45): " + inputLabel;
 		}
 		else {
-			instructions = "Alarm is set. Press R to reset";
+			instructions = "Alarm is set. Press R to Reset";
 		}
 
 		sf::Text instructionCenter = instructionText;
@@ -607,7 +607,7 @@ public:
 				(alarmMinute < 10 ? "0" : "") + std::to_string(alarmMinute) +
 				(isAM ? " AM" : " PM");
 
-			sf::Text alarmSetText(FontLoading::getFont(), alarmTimeStr, 60);
+			sf::Text alarmSetText(FontLoading::GetFont(), alarmTimeStr, 60);
 			alarmSetText.setFillColor(sf::Color::Green);
 			sf::FloatRect alarmBounds = alarmSetText.getLocalBounds();
 			alarmSetText.setOrigin(sf::Vector2f(alarmBounds.position.x + alarmBounds.size.x / 2.f, alarmBounds.position.y + alarmBounds.size.y / 2.f));
@@ -621,8 +621,8 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode({ 1920, 1080 }), "Clock Application", sf::Style::Close, sf::State::Windowed);
 	window.setFramerateLimit(60);
 
-	FontLoading::getFont();
-	if (!FontLoading::isLoaded) {
+	FontLoading::GetFont();
+	if (!FontLoading::IsLoaded) {
 		std::cerr << "Failed to load font";
 		return -1;
 	}
@@ -638,8 +638,8 @@ int main() {
 	std::string clockLabel = "";
 	Clock clock(clockLabel);
 
-	std::string stopwatchLabel = "";
-	Stopwatch stopwatch(stopwatchLabel);
+	std::string StopwatchLabel = "";
+	Stopwatch Stopwatch(StopwatchLabel);
 
 	std::string timerLabel = "";
 	Timer timer(timerLabel);
@@ -662,48 +662,48 @@ int main() {
 					}
 				}
 
-				else if (currentScreen == "stopwatch") {
+				else if (currentScreen == "Stopwatch") {
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
-						if (stopwatch.isRunning()) {
-							stopwatch.stop();
+						if (Stopwatch.IsRunning()) {
+							Stopwatch.Stop();
 						}
 						else {
-							stopwatch.start();
+							Stopwatch.Start();
 						}
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
-						stopwatch.reset();
+						Stopwatch.Reset();
 					}
 				}
 
 				else if(currentScreen == "timer"){
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Enter) {
-						timer.startTimer();
+						timer.StartTimer();
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::Backspace) {
 						if (!timerLabel.empty()) {
 							timerLabel.pop_back();
-							timer.setInput(timerLabel);
+							timer.SetInput(timerLabel);
 						}
 					}
 					else if (keyPressed->scancode >= sf::Keyboard::Scancode::Num1 && keyPressed->scancode <= sf::Keyboard::Scancode::Num9) {
 						int digit = static_cast<int>(keyPressed->scancode) - static_cast<int>(sf::Keyboard::Scancode::Num1) + 1;
 						timerLabel += std::to_string(digit);
-						timer.setInput(timerLabel);
+						timer.SetInput(timerLabel);
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::Num0) {
 						timerLabel += "0";
-						timer.setInput(timerLabel);
+						timer.SetInput(timerLabel);
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
-						timer.reset();
+						timer.Reset();
 						timerLabel.clear();
 					}
 				}
 				else if (currentScreen == "alarm") {
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Enter) {
 						if (!alarmLabel.empty()) {
-							alarm.setInput(alarmLabel);
+							alarm.SetInput(alarmLabel);
 						}
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::Backspace) {
@@ -712,11 +712,11 @@ int main() {
 						}
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
-						alarm.reset();
+						alarm.Reset();
 						alarmLabel.clear();
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
-						alarm.stopAlarm();
+						alarm.StopAlarm();
 					}
 					else if (keyPressed->scancode >= sf::Keyboard::Scancode::Num1 && keyPressed->scancode <= sf::Keyboard::Scancode::Num9) {
 						int digit = static_cast<int>(keyPressed->scancode) - static_cast<int>(sf::Keyboard::Scancode::Num1) + 1;
@@ -741,14 +741,14 @@ int main() {
 				if (buttonPressed->button == sf::Mouse::Button::Left) {
 					sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 					for (const Button& b : buttons) {
-						if (b.isClicked(mousePos)) {
-							int clickedButton = b.getIndex();
+						if (b.IsClicked(mousePos)) {
+							int clickedButton = b.GetIndex();
 							switch (clickedButton) {
 							case 0:
 								currentScreen = "clock";
 								break;
 							case 1:
-								currentScreen = "stopwatch";
+								currentScreen = "Stopwatch";
 								break;
 							case 2:
 								currentScreen = "alarm";
@@ -770,24 +770,24 @@ int main() {
 
 	if (currentScreen == "menu") {
 		for (const Button& b : buttons) {
-			b.draw(window);
+			b.Draw(window);
 		}
 	}
 	else if (currentScreen == "clock") {
-		clock.updateTime();
-		clock.draw(window);
+		clock.UpdateTime();
+		clock.Draw(window);
 	}
-	else if (currentScreen == "stopwatch") {
-		stopwatch.updateDisplay();
-		stopwatch.draw(window);
+	else if (currentScreen == "Stopwatch") {
+		Stopwatch.UpdateDisplay();
+		Stopwatch.Draw(window);
 	}
 	else if (currentScreen == "timer") {
-		timer.update();
-		timer.draw(window);
+		timer.Update();
+		timer.Draw(window);
 	}
 	else if (currentScreen == "alarm") {
-		alarm.update();
-		alarm.draw(window, alarmLabel);
+		alarm.Update();
+		alarm.Draw(window, alarmLabel);
 	}
 
 	window.display();
